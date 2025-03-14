@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { add, del, filterData, update } from './store/table-users/tableUserSlice'
+import {
+	add,
+	del,
+	filterData,
+	show,
+	update,
+} from './store/table-users/tableUserSlice'
 
 function App() {
 	const data = useSelector(state => state.table_users.filteredData)
@@ -21,13 +27,14 @@ function App() {
 	const [Editopen, setEditOpen] = useState(false)
 	const [EditId, setEditId] = useState(null)
 	const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light')
-	const [statusFilter, setStatusFilter] = useState('All status');
-  const [cityFilter, setCityFilter] = useState('All cities');
-  const [search, setSearch] = useState('');
+	const [statusFilter, setStatusFilter] = useState('All status')
+	const [cityFilter, setCityFilter] = useState('All cities')
+	const [search, setSearch] = useState('')
+	const selectedUser = useSelector(state => state.table_users.selectedUser)
 
-  useEffect(() => {
-    dispatach(filterData({ statusFilter, cityFilter, search }));
-  }, [statusFilter, cityFilter, search, dispatach]);
+	useEffect(() => {
+		dispatach(filterData({ statusFilter, cityFilter, search }))
+	}, [statusFilter, cityFilter, search, dispatach])
 
 	const handleAdd = () => {
 		dispatach(
@@ -106,43 +113,40 @@ function App() {
 			</div>
 
 			<div className='flex justify-between mx-32 mt-10'>
-         <div className='flex gap-10'>
-			<select
-            value={statusFilter}
-            onChange={e => setStatusFilter(e.target.value)}
-            className="p-2 border rounded-md w-full"
-          >
-            <option value="All status">All status</option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
-          <select
-            value={cityFilter}
-            onChange={e => setCityFilter(e.target.value)}
-            className="p-2 border rounded-md w-full"
-          >
-            <option value="All cities">All cities</option>
-            <option value="Dushanbe">Dushanbe</option>
-            <option value="Bakhtar">Bakhtar</option>
-            <option value="Khujand">Khujand</option>
-          </select>
+				<div className='flex gap-10'>
+					<select
+						value={statusFilter}
+						onChange={e => setStatusFilter(e.target.value)}
+						className='p-2 border rounded-md w-full'
+					>
+						<option value='All status'>All status</option>
+						<option value='Active'>Active</option>
+						<option value='Inactive'>Inactive</option>
+					</select>
+					<select
+						value={cityFilter}
+						onChange={e => setCityFilter(e.target.value)}
+						className='p-2 border rounded-md w-full'
+					>
+						<option value='All cities'>All cities</option>
+						<option value='Dushanbe'>Dushanbe</option>
+						<option value='Bakhtar'>Bakhtar</option>
+						<option value='Khujand'>Khujand</option>
+					</select>
+				</div>
+				<input
+					type='text'
+					placeholder='Search...'
+					value={search}
+					onChange={e => setSearch(e.target.value)}
+					className='p-2 border rounded-md dark:bg-white'
+				/>
 			</div>
-          <input
-            type="text"
-            placeholder="Search"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="p-2 border rounded-md"
-          />
-			</div>
-			
+
 			<div className='overflow-x-auto mt-20 m-auto'>
 				<table className='min-w-[80%] m-auto rounded-lg shadow-md overflow-hidden'>
 					<thead className='bg-gray-100'>
 						<tr>
-							<th className='px-6 py-3 text-left text-md font-semibold text-gray-900 uppercase'>
-								ID
-							</th>
 							<th className='px-6 py-3 text-left text-md font-semibold text-gray-900 uppercase'>
 								Name
 							</th>
@@ -164,51 +168,62 @@ function App() {
 						</tr>
 					</thead>
 					<tbody className='divide-y divide-gray-200'>
-						{data.length>0 ?(
-						 data.map(user => (
-							<tr key={user.id} className=''>
-								<td className='px-6 py-4 text-sm dark:text-gray-200 text-gray-700'>
-									{user.id}
-								</td>
-								<td className='px-6 py-4 text-sm dark:text-gray-200 text-gray-700'>
-									{user.name}
-								</td>
-								<td className='px-6 py-4 text-sm dark:text-gray-200 text-gray-700'>
-									{user.email}
-								</td>
-								<td className='px-6 py-4 text-sm dark:text-gray-200 text-gray-700'>
-									{user.city}
-								</td>
-								<td className='px-6 py-4 text-sm'>
-									<span
-										className={`px-2 py-1 rounded-md text-xs font-semibold ${
-											user.status
-												? 'text-green-100 bg-green-700'
-												: 'text-red-100 bg-red-700'
-										}`}
-									>
-										{user.status ? 'Active' : 'Inactive'}
-									</span>
-								</td>
-								<td className='px-6 py-4 text-sm dark:text-gray-200 text-gray-700'>
-									{user.phone}
-								</td>
-								<td className='px-6 py-4 text-sm space-x-2'>
-									<button
-										onClick={() => dispatach(del(user.id))}
-										className=' border border-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-lg shadow-md hover:border-red-500 hover:bg-red-30300'
-									>
-										Delete
-									</button>
-									<button
-										onClick={() => dispatach(Editclick(user))}
-										className=' border border-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-lg shadow-md hover:border-blue-500 hover:bg-blue-300'
-									>
-										Edit
-									</button>
-								</td>
-							</tr>
-						))):<td colSpan={7} className='text-center m-auto font-bold pt-20 text-[red] text-5xl'>Not Found</td>}
+						{data.length > 0 ? (
+							data.map(user => (
+								<tr key={user.id} className=''>
+									<td className='px-6 py-4 text-sm dark:text-gray-200 text-gray-700'>
+										{user.name}
+									</td>
+									<td className='px-6 py-4 text-sm dark:text-gray-200 text-gray-700'>
+										{user.email}
+									</td>
+									<td className='px-6 py-4 text-sm dark:text-gray-200 text-gray-700'>
+										{user.city}
+									</td>
+									<td className='px-6 py-4 text-sm'>
+										<span
+											className={`px-2 py-1 rounded-md text-xs font-semibold ${
+												user.status
+													? 'text-green-100 bg-green-700'
+													: 'text-red-100 bg-red-700'
+											}`}
+										>
+											{user.status ? 'Active' : 'Inactive'}
+										</span>
+									</td>
+									<td className='px-6 py-4 text-sm dark:text-gray-200 text-gray-700'>
+										{user.phone}
+									</td>
+									<td className='px-6 py-4 text-sm space-x-2'>
+										<button
+											onClick={() => dispatach(del(user.id))}
+											className=' border border-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-lg shadow-md hover:border-red-500 hover:bg-red-300'
+										>
+											Delete
+										</button>
+										<button
+											onClick={() => dispatach(Editclick(user))}
+											className=' border border-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-lg shadow-md hover:border-blue-500 hover:bg-blue-300'
+										>
+											Edit
+										</button>
+										<button
+											onClick={() => dispatach(show(user.id))}
+											className=' border border-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-lg shadow-md hover:border-green-500 hover:bg-green-300'
+										>
+											Show
+										</button>
+									</td>
+								</tr>
+							))
+						) : (
+							<td
+								colSpan={7}
+								className='text-center m-auto font-bold pt-20 text-[red] text-5xl'
+							>
+								Not Found
+							</td>
+						)}
 					</tbody>
 				</table>
 			</div>
@@ -240,7 +255,7 @@ function App() {
 							className='p-2 border rounded-md w-full'
 						/>
 
-						<div className='flex flex-col gap-2'>
+						<div className='flex mt-5 gap-2'>
 							<select
 								value={addCity}
 								onChange={e => setAddCity(e.target.value)}
@@ -297,7 +312,7 @@ function App() {
 							placeholder='Enter phone'
 							className='p-2 border rounded-md w-full'
 						/>
-						<div className='flex flex-col gap-2'>
+						<div className='flex mt-5 gap-2'>
 							<select
 								value={editCity}
 								onChange={e => setEditCity(e.target.value)}
@@ -326,6 +341,40 @@ function App() {
 							className='border-blue-500 border-[1px] text-blue-500 font-bold rounded-md hover:bg-blue-200 py-2 px-5'
 						>
 							Update
+						</button>
+					</div>
+				</div>
+			)}
+
+			{selectedUser && (
+				<div className='fixed inset-0 flex items-center justify-center '>
+					<div className='bg-white border-2 border-black rounded-lg shadow-lg p-6 w-80'>
+						<h2 className='text-xl font-bold text-center mb-4'>
+							User Information
+						</h2>
+						<div className='space-y-2'>
+							<p>
+								<span className='font-semibold'>Name:</span> {selectedUser.name}
+							</p>
+							<p>
+								<span className='font-semibold'>Email:</span>{' '}
+								{selectedUser.email}
+							</p>
+							<p>
+								<span className='font-semibold'>City:</span> {selectedUser.city}
+							</p>
+							<p>
+								<span className='font-semibold'>Status:</span> {selectedUser.status}
+							</p>
+							<p>
+								<span className='font-semibold'>umber:</span> {selectedUser.phone}
+							</p>
+						</div>
+						<button
+							className='mt-4 w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition'
+							onClick={() => dispatach(show(null))}
+						>
+							Close
 						</button>
 					</div>
 				</div>
