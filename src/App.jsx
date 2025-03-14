@@ -88,7 +88,7 @@ function App() {
 
 	return (
 		<div>
-			<div className='flex justify-between mx-32 my-4 items-center'>
+			<div className='flex justify-between lg:mx-32 my-4 mx-2 items-center'>
 				<h1 className='font-bold text-2xl text-gray-800'>Table Users</h1>
 				<div className='space-x-4'>
 					<button
@@ -112,8 +112,8 @@ function App() {
 				</div>
 			</div>
 
-			<div className='flex justify-between mx-32 mt-10'>
-				<div className='flex gap-10'>
+			<div className='flex justify-between lg:mx-32 mx-2 mt-10'>
+				<div className='flex lg:gap-10'>
 					<select
 						value={statusFilter}
 						onChange={e => setStatusFilter(e.target.value)}
@@ -371,7 +371,7 @@ function App() {
 							</p>
 						</div>
 						<button
-							className='mt-4 w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition'
+							className='mt-4 w-[20%] bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition'
 							onClick={() => dispatach(show(null))}
 						>
 							Close
